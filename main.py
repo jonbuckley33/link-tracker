@@ -19,7 +19,10 @@ def main():
     print(arrival.summary())
 
   display = RgbDisplay()
-  display.set_text("Next arrival: %s" % northbound_arrivals[0].eta.time().strftime("%X"))
+
+  first_line = "Next train north: %s" % northbound_arrivals[0].eta.strftime("%X")
+  second_line = "Next train south: %s" % southbound_arrivals[0].eta.strftime("%X")
+  display.set_text(first_line, second_line)
   while True:
     display.update()
     time.sleep(0.05)

@@ -11,7 +11,7 @@ class Arrival:
     self.eta = datetime.datetime.fromtimestamp(int(json['predictedArrivalTime']) / 1000)
   
   def summary(self):
-    return "Estimated arrival time: %s (%s stops away)" % (self.eta.time().strftime("%X"), self.num_stops_away)
+    return "Estimated arrival time: %s (%s stops away)" % (self.eta.strftime("%x %X"), self.num_stops_away)
 
 
 def fetch_arrivals(stop_id):
@@ -23,7 +23,7 @@ def fetch_arrivals(stop_id):
     raise Exception('GET request response is not 200: %s' % data)
 
   allArrivals = [Arrival(json) for json in data['data']['entry']['arrivalsAndDepartures']]
-  futureArrivals = [arrival for arrival in allArrivals if arrival.num_stops_away > 0]
+  futureArrivals = [arrival for arrival in allArrivals if arrival.num_stops_away > 0 and arrival.eta > datetime.datetime.now()]
 
   futureArrivals.sort(key=lambda arrival : arrival.eta)
   return futureArrivals

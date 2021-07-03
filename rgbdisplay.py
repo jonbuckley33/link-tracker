@@ -5,8 +5,10 @@ DISPLAY_ROWS=32
 DISPLAY_COLUMNS=64
 LED_SLOWDOWN_GPIO=4
 FONT_FILE="/usr/share/fonts/helvetica-12.bdf"
-TEXT_COLOR=graphics.Color(255, 255, 0)
-Y_OFFSET=10
+FIRST_LINE_COLOR=graphics.Color(255, 0, 0)
+SECOND_LINE_COLOR=graphics.Color(0, 255, 255)
+FIRST_LINE_Y_POS=10
+SECOND_LINE_Y_POS=25
 
 class RgbDisplay:
   def __init__(self, *args, **kwargs):
@@ -18,18 +20,24 @@ class RgbDisplay:
     self.font = graphics.Font()
     self.font.LoadFont(FONT_FILE)
     self.canvas = self.matrix.CreateFrameCanvas()
-    self.text = ""
     self.position = self.canvas.width
 
-  def set_text(self, text):
-    self.text = text
+    # Display renders two lines of text, one on top
+    # of the other.
+    self.first_line = ""
+    self.second_line = ""
+
+  def set_text(self, first_line, second_line):
+    self.first_line = first_line
+    self.second_line = second_line
 
   def update(self):
     self.canvas.Clear()
 
-    len = graphics.DrawText(self.canvas, self.font, self.position, Y_OFFSET, TEXT_COLOR, self.text)
+    top_len = graphics.DrawText(self.canvas, self.font, self.position, FIRST_LINE_Y_POS, FIRST_LINE_COLOR, self.first_line)
+    bottom_len = graphics.DrawText(self.canvas, self.font, self.position, SECOND_LINE_Y_POS, SECOND_LINE_COLOR, self.second_line)
     self.position -= 1
-    if self.position + len < 0:
+    if self.position + max(top_len, bottom_len) < 0:
       self.position = self.canvas.width
 
     self.matrix.SwapOnVSync(self.canvas)
