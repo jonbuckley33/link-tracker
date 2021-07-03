@@ -1,6 +1,5 @@
 from rgbmatrix import graphics
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
-import time
 
 DISPLAY_ROWS=32
 DISPLAY_COLUMNS=64

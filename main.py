@@ -19,7 +19,7 @@ def main():
     print(arrival.summary())
 
   display = RgbDisplay()
-  display.set_text("Next arrival: %s" % time.strftime("%X", northbound_arrivals[0].eta))
+  display.set_text("Next arrival: %s" % northbound_arrivals[0].eta.time().strftime("%X"))
   while True:
     display.update()
     time.sleep(0.05)

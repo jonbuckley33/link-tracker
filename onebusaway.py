@@ -8,10 +8,10 @@ API_KEY='9e3fe27b-c722-4bbf-be38-ad7391dcf21d'
 class Arrival:
   def __init__(self, json):
     self.num_stops_away = json["numberOfStopsAway"]
-    self.eta = datetime.fromtimestamp(int(json['predictedArrivalTime']) / 1000)
+    self.eta = datetime.datetime.fromtimestamp(int(json['predictedArrivalTime']) / 1000)
   
   def summary(self):
-    return "Estimated arrival time: %s (%s stops away)" % (time.strftime("%X", self.eta.time()), self.num_stops_away)
+    return "Estimated arrival time: %s (%s stops away)" % (self.eta.time().strftime("%X"), self.num_stops_away)
 
 
 def fetch_arrivals(stop_id):
