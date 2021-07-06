@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import onebusaway
 import logging
-from scrollingdisplay import ScrollingDisplay
+from densedisplay import DenseDisplay
 import threading
 import time
 
@@ -11,7 +11,7 @@ PAINT_FPS = 30
 FETCH_FPS = 0.05  # 1 fetch per 20 seconds
 
 def run():
-  display = ScrollingDisplay() 
+  display = DenseDisplay() 
   try:   
     paint_thread = threading.Thread(target=paint, args=(display,), daemon=True)
     update_arrivals_thread = threading.Thread(target=update_arrivals, args=(display,), daemon=True)
