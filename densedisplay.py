@@ -6,22 +6,27 @@ import threading
 DISPLAY_ROWS=32
 DISPLAY_COLUMNS=64
 LED_SLOWDOWN_GPIO=4
-SMALL_FONT_FILE="/home/pi/rpi-rgb-led-matrix/fonts/5x7.bdf"
+SMALL_FONT_FILE="/home/pi/rpi-rgb-led-matrix/fonts/5x8.bdf"
 MEDIUM_FONT_FILE="/home/pi/rpi-rgb-led-matrix/fonts/6x13.bdf"
 MEDIUM_FONT_WIDTH=6
-TITLE_COLOR=graphics.Color(0, 46, 109)
+TITLE_COLOR=graphics.Color(243, 139, 0)
 NORTH_LABEL_COLOR=graphics.Color(255, 0, 0)
 SOUTH_LABEL_COLOR=graphics.Color(255, 255, 255)
-TIME_COLOR=graphics.Color(214, 7, 142)
+PREDICTED_TIME_COLOR=graphics.Color(52, 168, 83)
+SCHEDULED_TIME_COLOR=graphics.Color(170, 170, 170)
+NO_ARRIVALS_COLOR=graphics.Color(170, 170, 170)
 FIRST_LINE_Y_POS=10
 SECOND_LINE_Y_POS=25
-TICKS_BEFORE_SCROLLING = 30
+PADDING_BEFORE_TIME_SUFFIX=2
+BRIGHTNESS=100  # Out of 100
 
 def _text_for_arrival(direction, arrival):
   if arrival is None:
     return "NONE"
-  minutes = round((arrival.eta - datetime.datetime.now()).total_seconds() / 60)
-  return "%s'" % minutes
+  return "%s min" % _minutes_until_arrival(arrival)
+
+def _minutes_until_arrival(arrival):
+  return round((arrival.eta - datetime.datetime.now()).total_seconds() / 60)
 
 TICKS_PER_STATE = {
   "BEGINNING_OF_LINE": 90,
@@ -74,7 +79,7 @@ class DenseDisplay:
     options.rows = DISPLAY_ROWS
     options.cols = DISPLAY_COLUMNS
     options.gpio_slowdown = LED_SLOWDOWN_GPIO
-    options.brightness = 50 # Out of 100
+    options.brightness = BRIGHTNESS
 
     self.lock = threading.Lock()
     self.matrix = RGBMatrix(options = options)
@@ -89,14 +94,14 @@ class DenseDisplay:
     self.title = ScrollingTextDisplay(self.canvas, {'x': 0, 'y': self.small_font.height}, self.small_font, TITLE_COLOR)
     self.title.set_text("COLUMBIA CITY STATION ARRIVALS")
 
-    self.first_line = "..."
-    self.second_line = "..."
+    self.northbound = None
+    self.southbound = None
 
   def set_next_arrivals(self, northbound, southbound):
     with self.lock:
-      self.first_line = _text_for_arrival("north", northbound)
-      self.second_line = _text_for_arrival("south", southbound)
-
+      self.northbound = northbound
+      self.southbound = southbound
+   
   def update(self):
     with self.lock:
       self.canvas.Clear()
@@ -105,16 +110,30 @@ class DenseDisplay:
 
       first_line_y = self.title.y + 11
       graphics.DrawText(self.canvas, self.medium_font, 0, first_line_y, NORTH_LABEL_COLOR, "North")
-      x = self.canvas.width - (len(self.first_line) * MEDIUM_FONT_WIDTH)
-      graphics.DrawText(self.canvas, self.medium_font, x, first_line_y, TIME_COLOR, self.first_line)
+      self._draw_arrival(self.northbound, first_line_y)
       
       second_line_y = first_line_y + 12
       graphics.DrawText(self.canvas, self.medium_font, 0, second_line_y, SOUTH_LABEL_COLOR, "South")
-      x = self.canvas.width - (len(self.second_line) * MEDIUM_FONT_WIDTH)
-      graphics.DrawText(self.canvas, self.medium_font, x, second_line_y, TIME_COLOR, self.second_line)
+      self._draw_arrival(self.southbound, second_line_y)
 
       self.matrix.SwapOnVSync(self.canvas)
 
   def clear(self):
     with self.lock:
       self.canvas.Clear()
+
+  def _draw_arrival(self, arrival, y):
+    if arrival is None:
+      message = "N/A"
+      x = self.matrix.width - (len(message) * MEDIUM_FONT_WIDTH)
+      graphics.DrawText(self.canvas, self.medium_font, x, y, NO_ARRIVALS_COLOR, message)
+      return
+
+    mins = "%s" % _minutes_until_arrival(arrival)
+    suffix = "min"
+    color = PREDICTED_TIME_COLOR if arrival.predicted else SCHEDULED_TIME_COLOR
+    x = self.canvas.width - (len(mins) * MEDIUM_FONT_WIDTH + PADDING_BEFORE_TIME_SUFFIX + len(suffix) * MEDIUM_FONT_WIDTH)
+    graphics.DrawText(self.canvas, self.medium_font, x, y, color, mins)
+    x = self.canvas.width - (len(suffix) * MEDIUM_FONT_WIDTH)
+    graphics.DrawText(self.canvas, self.medium_font, x, y, color, suffix)
+ 
