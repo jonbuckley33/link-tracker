@@ -25,7 +25,7 @@ TICKS_PER_STATE = {
   "END_OF_LINE": 90,
 }
 
-class RgbDisplay:
+class ScrollingDisplay:
   def __init__(self, *args, **kwargs):
     options = RGBMatrixOptions()
     options.rows = DISPLAY_ROWS

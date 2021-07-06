@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import onebusaway
 import logging
-from rgbdisplay import RgbDisplay
+from scrollingdisplay import ScrollingDisplay
 import threading
 import time
 
@@ -11,7 +11,7 @@ PAINT_FPS = 30
 FETCH_FPS = 0.05  # 1 fetch per 20 seconds
 
 def run():
-  display = RgbDisplay() 
+  display = ScrollingDisplay() 
   try:   
     paint_thread = threading.Thread(target=paint, args=(display,), daemon=True)
     update_arrivals_thread = threading.Thread(target=update_arrivals, args=(display,), daemon=True)
@@ -40,6 +40,7 @@ def update_arrivals(display):
 
       next_northbound_arrival = northbound_arrivals[0] if len(northbound_arrivals) > 0 else None
       next_southbound_arrival = southbound_arrivals[0] if len(southbound_arrivals) > 0 else None
+      
       display.set_next_arrivals(next_northbound_arrival, next_southbound_arrival)
     except Exception:
       logging.exception("failed to fetch arrivals")
