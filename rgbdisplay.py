@@ -5,7 +5,7 @@ import threading
 DISPLAY_ROWS=32
 DISPLAY_COLUMNS=64
 LED_SLOWDOWN_GPIO=4
-FONT_FILE="/usr/share/fonts/helvetica-12.bdf"
+FONT_FILE="/home/pi/rpi-rgb-led-matrix/fonts/6x13.bdf"
 FIRST_LINE_COLOR=graphics.Color(255, 0, 0)
 SECOND_LINE_COLOR=graphics.Color(0, 255, 255)
 FIRST_LINE_Y_POS=10
