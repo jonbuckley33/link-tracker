@@ -92,7 +92,7 @@ class DenseDisplay:
     self.medium_font.LoadFont(MEDIUM_FONT_FILE)
 
     self.title = ScrollingTextDisplay(self.canvas, {'x': 0, 'y': self.small_font.height}, self.small_font, TITLE_COLOR)
-    self.title.set_text("COLUMBIA CITY STATION ARRIVALS")
+    self.title.set_text("COLUMBIA CITY STATION DEPARTURES")
 
     self.northbound = None
     self.southbound = None
