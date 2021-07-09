@@ -118,6 +118,10 @@ class DenseDisplay:
 
       self.matrix.SwapOnVSync(self.canvas)
 
+  def set_brightness(self, brightness):
+    with self.lock:
+      self.matrix.brightness = brightness
+
   def clear(self):
     with self.lock:
       self.canvas.Clear()

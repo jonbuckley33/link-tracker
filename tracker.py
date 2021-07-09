@@ -1,3 +1,4 @@
+from brightnesscalculator import calculate_brightness_from_time
 import onebusaway
 import logging
 from densedisplay import DenseDisplay
@@ -8,6 +9,7 @@ COLUMBIA_CITY_NORTHBOUND_STOP_ID='1_55778'
 COLUMBIA_CITY_SOUTHBOUND_STOP_ID='1_56039'
 PAINT_FPS = 30
 FETCH_FPS = 0.05  # 1 fetch per 20 seconds
+UPDATE_BRIGHTNESS_PERIOD_SECONDS = 60
 
 class Tracker:
   def __init__(self):
@@ -15,10 +17,12 @@ class Tracker:
     self.stopped = threading.Event()
 
   def start(self):
-    self.paint_thread = threading.Thread(target=self._paint)
-    self.update_arrivals_thread = threading.Thread(target=self._update_arrivals)
-    self.paint_thread.start()
-    self.update_arrivals_thread.start()
+    paint_thread = threading.Thread(target=self._paint)
+    update_arrivals_thread = threading.Thread(target=self._update_arrivals)
+    update_brightness_thread = threading.Thread(target=self._update_brightness)
+    paint_thread.start()
+    update_arrivals_thread.start()
+    update_brightness_thread.start()
 
   def stop(self):
     self.stopped.set()
@@ -45,5 +49,12 @@ class Tracker:
         logging.exception("failed to fetch arrivals")
       finally:
         self.stopped.wait(1.0 / FETCH_FPS)
+
+  def _update_brightness(self):
+    while not self.stopped.is_set():
+      brightness = calculate_brightness_from_time()
+      logging.info("setting brightness level to %d", brightness)
+      self.display.set_brightness(brightness)
+      self.stopped.wait(UPDATE_BRIGHTNESS_PERIOD_SECONDS)
 
     
