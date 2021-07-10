@@ -1,16 +1,16 @@
 import datetime
 import logging
+import onebusaway
 import pytz
 from suntime import Sun
-
-SEATTLE_LATITUDE = 47.55971
-SEATTLE_LONGITUDE = -122.29247
 
 NIGHT_BRIGHTNESS = 50
 DAY_BRIGHTNESS = 100
 
-def calculate_brightness_from_time():
-  sun = Sun(SEATTLE_LATITUDE, SEATTLE_LONGITUDE)
+def calculate_brightness_from_time(tracker_config):
+  stop = onebusaway.fetch_stop(tracker_config.northbound_station_stop_id)
+
+  sun = Sun(stop.latitude, stop.longitude)
 
   now = pytz.utc.localize(datetime.datetime.utcnow())
   today = datetime.date.today()
