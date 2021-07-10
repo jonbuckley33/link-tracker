@@ -18,7 +18,7 @@ NO_ARRIVALS_COLOR=graphics.Color(170, 170, 170)
 FIRST_LINE_Y_POS=10
 SECOND_LINE_Y_POS=25
 PADDING_BEFORE_TIME_SUFFIX=2
-BRIGHTNESS=100  # Out of 100
+STARTING_BRIGHTNESS=100  # Out of 100
 
 def _text_for_arrival(direction, arrival):
   if arrival is None:
@@ -27,6 +27,9 @@ def _text_for_arrival(direction, arrival):
 
 def _minutes_until_arrival(arrival):
   return round((arrival.eta - datetime.datetime.now()).total_seconds() / 60)
+
+def _to_graphics_color(proto_color):
+  return graphics.Color(proto_color.r, proto_color.g, proto_color.b)
 
 TICKS_PER_STATE = {
   "BEGINNING_OF_LINE": 90,
@@ -74,12 +77,14 @@ class ScrollingTextDisplay:
 
 
 class DenseDisplay:
-  def __init__(self, *args, **kwargs):
+  def __init__(self, display_config):
+    self.display_config = display_config
+
     options = RGBMatrixOptions()
-    options.rows = DISPLAY_ROWS
-    options.cols = DISPLAY_COLUMNS
-    options.gpio_slowdown = LED_SLOWDOWN_GPIO
-    options.brightness = BRIGHTNESS
+    options.rows = display_config.display_height_pixels
+    options.cols = display_config.display_width_pixels
+    options.gpio_slowdown = display_config.gpio_slowdown
+    options.brightness = STARTING_BRIGHTNESS
 
     self.lock = threading.Lock()
     self.matrix = RGBMatrix(options = options)
@@ -91,7 +96,10 @@ class DenseDisplay:
     self.medium_font = graphics.Font()
     self.medium_font.LoadFont(MEDIUM_FONT_FILE)
 
-    self.title = ScrollingTextDisplay(self.canvas, {'x': 0, 'y': self.small_font.height}, self.small_font, TITLE_COLOR)
+    self.title = ScrollingTextDisplay(
+        self.canvas, {'x': 0, 'y': self.small_font.height}, 
+        self.small_font, _to_graphics_color(display_config.title_color)
+    )
     self.title.set_text("COLUMBIA CITY STATION DEPARTURES")
 
     self.northbound = None
@@ -109,18 +117,23 @@ class DenseDisplay:
       self.title.update()
 
       first_line_y = self.title.y + 11
-      graphics.DrawText(self.canvas, self.medium_font, 0, first_line_y, NORTH_LABEL_COLOR, "North")
+      graphics.DrawText(
+          self.canvas, self.medium_font, 0, first_line_y,
+          _to_graphics_color(self.display_config.north_label_color), "North")
       self._draw_arrival(self.northbound, first_line_y)
       
       second_line_y = first_line_y + 12
-      graphics.DrawText(self.canvas, self.medium_font, 0, second_line_y, SOUTH_LABEL_COLOR, "South")
+      graphics.DrawText(
+          self.canvas, self.medium_font, 0, second_line_y,
+          _to_graphics_color(self.display_config.south_label_color), "South")
       self._draw_arrival(self.southbound, second_line_y)
 
       self.matrix.SwapOnVSync(self.canvas)
 
   def set_brightness(self, brightness):
+    """Sets the brightness of the display given a [0.0, 1.0] input"""
     with self.lock:
-      self.matrix.brightness = brightness
+      self.matrix.brightness = brightness * 100
 
   def clear(self):
     with self.lock:
@@ -130,12 +143,14 @@ class DenseDisplay:
     if arrival is None:
       message = "N/A"
       x = self.matrix.width - (len(message) * MEDIUM_FONT_WIDTH)
-      graphics.DrawText(self.canvas, self.medium_font, x, y, NO_ARRIVALS_COLOR, message)
+      graphics.DrawText(
+          self.canvas, self.medium_font, x, y, 
+          _to_graphics_color(self.display_config.no_arrivals_color), message)
       return
 
     mins = "%s" % _minutes_until_arrival(arrival)
     suffix = "min"
-    color = PREDICTED_TIME_COLOR if arrival.predicted else SCHEDULED_TIME_COLOR
+    color = _to_graphics_color(self.display_config.predicted_time_color if arrival.predicted else self.display_config.scheduled_time_color)
     x = self.canvas.width - (len(mins) * MEDIUM_FONT_WIDTH + PADDING_BEFORE_TIME_SUFFIX + len(suffix) * MEDIUM_FONT_WIDTH)
     graphics.DrawText(self.canvas, self.medium_font, x, y, color, mins)
     x = self.canvas.width - (len(suffix) * MEDIUM_FONT_WIDTH)

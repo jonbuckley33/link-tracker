@@ -3,11 +3,12 @@ import requests
 import time
   
 ARRIVALS_AND_DEPARTURES_URL = 'http://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/%s.json'
+STOP_URL = 'http://api.pugetsound.onebusaway.org/api/where/stop/%s.json'
 API_KEY='9e3fe27b-c722-4bbf-be38-ad7391dcf21d'
   
 class Arrival:
   def __init__(self, json):
-    self.num_stops_away = json["numberOfStopsAway"]
+    self.num_stops_away = json['numberOfStopsAway']
     self.predicted = json['predicted']
     arrival_time_milliseconds = int(json['predictedArrivalTime']) if self.predicted else int(json['scheduledArrivalTime'])
     self.eta = datetime.datetime.fromtimestamp(arrival_time_milliseconds / 1000)
@@ -29,4 +30,21 @@ def fetch_arrivals(stop_id):
 
   futureArrivals.sort(key=lambda arrival : arrival.eta)
   return futureArrivals
+
+class Stop:
+  def __init__(self, json):
+    self.latitude = int(json['lat'])
+    self.longitude = int(json['lon'])
+  
+def fetch_stop(stop_id):
+  response = requests.get(url = STOP_URL % stop_id, params = {'key':API_KEY})
+  
+  data = response.json()
+
+  if data['code'] != 200:
+    raise Exception('GET request response is not 200: %s' % data)
+
+  return Stop(data['data']['entry'])
+ 
+
 

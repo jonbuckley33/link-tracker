@@ -4,10 +4,8 @@ import onebusaway
 import pytz
 from suntime import Sun
 
-NIGHT_BRIGHTNESS = 50
-DAY_BRIGHTNESS = 100
-
 def calculate_brightness_from_time(tracker_config):
+  """Calculates what the brightness of the display should be right now [0.0, 1.0]"""
   stop = onebusaway.fetch_stop(tracker_config.northbound_station_stop_id)
 
   sun = Sun(stop.latitude, stop.longitude)
@@ -25,6 +23,6 @@ def calculate_brightness_from_time(tracker_config):
     .format("daytime" if is_daytime else "nighttime", now, sunrise, sunset))
 
   if is_daytime:
-    return DAY_BRIGHTNESS
-  return NIGHT_BRIGHTNESS
+    return tracker_config.display_config.daytime_display_brightness
+  return tracker_config.display_config.nighttime_display_brightness
 

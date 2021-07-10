@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package linktracker;
+
+message TrackerConfig {
+  string northbound_station_stop_id = 1;
+  string southbound_station_stop_id = 2;
+
+  message DisplayConfig {
+    float daytime_display_brightness = 1;
+    float nighttime_display_brightness = 2;
+
+    int32 display_width_pixels = 3;
+    int32 display_height_pixels = 4;
+
+    int32 gpio_slowdown = 5;
+
+    Color title_color = 6;
+    Color north_label_color = 7;
+    Color south_label_color = 8;
+    Color predicted_time_color = 9;
+    Color scheduled_time_color = 10;
+    Color no_arrivals_color = 11;
+  }
+  DisplayConfig display_config = 3;
+}
+
+message Color {
+  int32 r = 1;
+  int32 g = 2;
+  int32 b = 3;
+}
