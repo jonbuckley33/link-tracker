@@ -12,7 +12,7 @@ DAY_BRIGHTNESS = 100
 def calculate_brightness_from_time():
   sun = Sun(SEATTLE_LATITUDE, SEATTLE_LONGITUDE)
 
-  now = pytz.utc.localize(datetime.datetime.utcnow()) + datetime.timedelta(hours=3)
+  now = pytz.utc.localize(datetime.datetime.utcnow())
   today = datetime.date.today()
   sunrise = sun.get_sunrise_time(today)
   # get_sunset_time inexplicably returns the sunset of the previous
