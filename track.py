@@ -10,6 +10,7 @@ if __name__ == "__main__":
   tracker_config = TrackerConfig()
   tracker_config.northbound_station_stop_id = '1_55778'
   tracker_config.southbound_station_stop_id = '1_56039'
+  tracker_config.depature_fetch_interval_seconds = 30
   tracker_config.display_config.display_width_pixels = 64
   tracker_config.display_config.display_height_pixels = 32
   tracker_config.display_config.daytime_display_brightness = 1.0
@@ -21,6 +22,8 @@ if __name__ == "__main__":
   tracker_config.display_config.predicted_time_color.CopyFrom(Color(r=52, g=168, b=83))
   tracker_config.display_config.scheduled_time_color.CopyFrom(Color(r=170, g=170, b=170))
   tracker_config.display_config.no_arrivals_color.CopyFrom(Color(r=170, g=170, b=170))
+  tracker_config.display_config.paint_fps = 30.0
+  tracker_config.display_config.recalculate_brightness_interval_seconds = 30
 
   tracker = Tracker(tracker_config)
 

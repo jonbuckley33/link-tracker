@@ -5,10 +5,6 @@ from densedisplay import DenseDisplay
 import threading
 import time
 
-PAINT_FPS = 30
-FETCH_FPS = 0.05  # 1 fetch per 20 seconds
-UPDATE_BRIGHTNESS_PERIOD_SECONDS = 60
-
 class Tracker:
   def __init__(self, tracker_config):
     self.tracker_config = tracker_config
@@ -29,7 +25,7 @@ class Tracker:
   def _paint(self):
     while not self.stopped.is_set():
       self.display.update()
-      self.stopped.wait(1.0 / PAINT_FPS)
+      self.stopped.wait(1.0 / self.tracker_config.display_config.paint_fps)
 
   def _update_arrivals(self):
     while not self.stopped.is_set():
@@ -47,7 +43,7 @@ class Tracker:
       except Exception:
         logging.exception("failed to fetch arrivals")
       finally:
-        self.stopped.wait(1.0 / FETCH_FPS)
+        self.stopped.wait(self.tracker_config.depature_fetch_interval_seconds)
 
   def _update_brightness(self):
     while not self.stopped.is_set():
@@ -58,6 +54,6 @@ class Tracker:
       except Exception:
         logging.exception("failed to calculate and set brightness")
       finally:
-        self.stopped.wait(UPDATE_BRIGHTNESS_PERIOD_SECONDS)
+        self.stopped.wait(self.tracker_config.display_config.recalculate_brightness_interval_seconds)
 
     

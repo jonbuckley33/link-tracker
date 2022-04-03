@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x14tracker_config.proto\x12\x0blinktracker\"\xe3\x04\n\rTrackerConfig\x12\"\n\x1anorthbound_station_stop_id\x18\x01 \x01(\t\x12\"\n\x1asouthbound_station_stop_id\x18\x02 \x01(\t\x12@\n\x0e\x64isplay_config\x18\x03 \x01(\x0b\x32(.linktracker.TrackerConfig.DisplayConfig\x1a\xc7\x03\n\rDisplayConfig\x12\"\n\x1a\x64\x61ytime_display_brightness\x18\x01 \x01(\x02\x12$\n\x1cnighttime_display_brightness\x18\x02 \x01(\x02\x12\x1c\n\x14\x64isplay_width_pixels\x18\x03 \x01(\x05\x12\x1d\n\x15\x64isplay_height_pixels\x18\x04 \x01(\x05\x12\x15\n\rgpio_slowdown\x18\x05 \x01(\x05\x12\'\n\x0btitle_color\x18\x06 \x01(\x0b\x32\x12.linktracker.Color\x12-\n\x11north_label_color\x18\x07 \x01(\x0b\x32\x12.linktracker.Color\x12-\n\x11south_label_color\x18\x08 \x01(\x0b\x32\x12.linktracker.Color\x12\x30\n\x14predicted_time_color\x18\t \x01(\x0b\x32\x12.linktracker.Color\x12\x30\n\x14scheduled_time_color\x18\n \x01(\x0b\x32\x12.linktracker.Color\x12-\n\x11no_arrivals_color\x18\x0b \x01(\x0b\x32\x12.linktracker.Color\"(\n\x05\x43olor\x12\t\n\x01r\x18\x01 \x01(\x05\x12\t\n\x01g\x18\x02 \x01(\x05\x12\t\n\x01\x62\x18\x03 \x01(\x05\x62\x06proto3'
+  serialized_pb=b'\n\x14tracker_config.proto\x12\x0blinktracker\"\xd0\x05\n\rTrackerConfig\x12\"\n\x1anorthbound_station_stop_id\x18\x01 \x01(\t\x12\"\n\x1asouthbound_station_stop_id\x18\x02 \x01(\t\x12\'\n\x1f\x64\x65pature_fetch_interval_seconds\x18\x04 \x01(\x05\x12@\n\x0e\x64isplay_config\x18\x03 \x01(\x0b\x32(.linktracker.TrackerConfig.DisplayConfig\x1a\x8b\x04\n\rDisplayConfig\x12\"\n\x1a\x64\x61ytime_display_brightness\x18\x01 \x01(\x02\x12$\n\x1cnighttime_display_brightness\x18\x02 \x01(\x02\x12\x1c\n\x14\x64isplay_width_pixels\x18\x03 \x01(\x05\x12\x1d\n\x15\x64isplay_height_pixels\x18\x04 \x01(\x05\x12\x15\n\rgpio_slowdown\x18\x05 \x01(\x05\x12\'\n\x0btitle_color\x18\x06 \x01(\x0b\x32\x12.linktracker.Color\x12-\n\x11north_label_color\x18\x07 \x01(\x0b\x32\x12.linktracker.Color\x12-\n\x11south_label_color\x18\x08 \x01(\x0b\x32\x12.linktracker.Color\x12\x30\n\x14predicted_time_color\x18\t \x01(\x0b\x32\x12.linktracker.Color\x12\x30\n\x14scheduled_time_color\x18\n \x01(\x0b\x32\x12.linktracker.Color\x12-\n\x11no_arrivals_color\x18\x0b \x01(\x0b\x32\x12.linktracker.Color\x12\x11\n\tpaint_fps\x18\x0c \x01(\x02\x12/\n\'recalculate_brightness_interval_seconds\x18\r \x01(\x05\"(\n\x05\x43olor\x12\t\n\x01r\x18\x01 \x01(\x05\x12\t\n\x01g\x18\x02 \x01(\x05\x12\t\n\x01\x62\x18\x03 \x01(\x05\x62\x06proto3'
 )
 
 
@@ -110,6 +110,20 @@ _TRACKERCONFIG_DISPLAYCONFIG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='paint_fps', full_name='linktracker.TrackerConfig.DisplayConfig.paint_fps', index=11,
+      number=12, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='recalculate_brightness_interval_seconds', full_name='linktracker.TrackerConfig.DisplayConfig.recalculate_brightness_interval_seconds', index=12,
+      number=13, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -122,8 +136,8 @@ _TRACKERCONFIG_DISPLAYCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=194,
-  serialized_end=649,
+  serialized_start=235,
+  serialized_end=758,
 )
 
 _TRACKERCONFIG = _descriptor.Descriptor(
@@ -149,7 +163,14 @@ _TRACKERCONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='display_config', full_name='linktracker.TrackerConfig.display_config', index=2,
+      name='depature_fetch_interval_seconds', full_name='linktracker.TrackerConfig.depature_fetch_interval_seconds', index=2,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='display_config', full_name='linktracker.TrackerConfig.display_config', index=3,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -168,7 +189,7 @@ _TRACKERCONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=38,
-  serialized_end=649,
+  serialized_end=758,
 )
 
 
@@ -213,8 +234,8 @@ _COLOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=651,
-  serialized_end=691,
+  serialized_start=760,
+  serialized_end=800,
 )
 
 _TRACKERCONFIG_DISPLAYCONFIG.fields_by_name['title_color'].message_type = _COLOR
