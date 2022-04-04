@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+from google.protobuf import text_format
 import logging
 import signal
 from tracker import Tracker
@@ -6,24 +8,15 @@ from tracker_config_pb2 import TrackerConfig, Color
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.NOTSET)
-  
-  tracker_config = TrackerConfig()
-  tracker_config.northbound_station_stop_id = '1_55778'
-  tracker_config.southbound_station_stop_id = '1_56039'
-  tracker_config.depature_fetch_interval_seconds = 30
-  tracker_config.display_config.display_width_pixels = 64
-  tracker_config.display_config.display_height_pixels = 32
-  tracker_config.display_config.daytime_display_brightness = 1.0
-  tracker_config.display_config.nighttime_display_brightness = 0.5
-  tracker_config.display_config.gpio_slowdown = 4
-  tracker_config.display_config.title_color.CopyFrom(Color(r=243, g=139, b=0))
-  tracker_config.display_config.north_label_color.CopyFrom(Color(r=255, g=0, b=0))
-  tracker_config.display_config.south_label_color.CopyFrom(Color(r=255, g=255, b=255))
-  tracker_config.display_config.predicted_time_color.CopyFrom(Color(r=52, g=168, b=83))
-  tracker_config.display_config.scheduled_time_color.CopyFrom(Color(r=170, g=170, b=170))
-  tracker_config.display_config.no_arrivals_color.CopyFrom(Color(r=170, g=170, b=170))
-  tracker_config.display_config.paint_fps = 30.0
-  tracker_config.display_config.recalculate_brightness_interval_seconds = 30
+
+  parser = argparse.ArgumentParser(description='Display LINK departure times.')
+  parser.add_argument('--config-file', 
+    default="/etc/link_tracker/tracker_config.textproto", 
+    help='File containing TrackerConfig textproto (default = /etc/link_tracker/tracker_config.textproto)')
+  args = parser.parse_args()
+
+  config_file = open(args.config_file, "r")
+  tracker_config = text_format.Parse(config_file.read(), TrackerConfig())
 
   tracker = Tracker(tracker_config)
 
