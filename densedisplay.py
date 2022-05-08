@@ -85,6 +85,7 @@ class DenseDisplay:
     options.cols = display_config.display_width_pixels
     options.gpio_slowdown = display_config.gpio_slowdown
     options.brightness = STARTING_BRIGHTNESS
+    options.pixel_mapper_config = "Rotate:%d" % display_config.display_rotation_degrees
 
     self.lock = threading.Lock()
     self.matrix = RGBMatrix(options = options)
